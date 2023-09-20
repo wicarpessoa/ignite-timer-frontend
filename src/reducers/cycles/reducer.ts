@@ -1,5 +1,5 @@
 import { produce } from 'immer'
-import { ActionTypes } from './actions'
+import { ActionTypes, ActionTypesProps } from './actions'
 
 export interface Cycle {
   id: string
@@ -15,18 +15,16 @@ interface CyclesState {
   activeCycleId: string | null
 }
 
-export function cyclesReducer(state: CyclesState, action: any) {
+export function cyclesReducer(state: CyclesState, action: ActionTypesProps) {
   switch (action.type) {
     case ActionTypes.ADD_NEW_CYCLE:
       return produce(state, (draft) => {
-        draft.cycles.push(action.payload.newCycle)
-        draft.activeCycleId = action.payload.newCycle.id
+        if (action.payload) {
+          draft.cycles.push(action.payload)
+          draft.activeCycleId = action.payload.id
+        }
       })
-    //  {
-    //   ...state,
-    //   cycles: [...state.cycles, action.payload.newCycle],
-    //   activeCycleId: action.payload.newCycle.id,
-    // }
+
     case ActionTypes.MARK_CURRENT_CYCLE_AS_FINISHED: {
       const currentCycleIndex = state.cycles.findIndex((cycle) => {
         return cycle.id === state.activeCycleId
